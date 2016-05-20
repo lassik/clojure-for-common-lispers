@@ -1,0 +1,265 @@
+Clojure for Common Lispers
+==========================
+
+Startup and REPL
+----------------
+Leiningen is the most popular way to run Clojure and work with Clojure
+projects. It's simply `lein` from the command line. Leiningen is not
+an official part of Clojure, but everyone uses it.
+
+To start a REPL: `lein repl`
+
+Comments
+--------
+
+Comments start with ; and run until end-of-line like CL (and most Lisps).
+
+CL block comments `#| ... |#`
+
+Symbols
+=======
+
+
+Numbers
+-------
+
+Most things work the same:
+
+     123
+     123.45
+     -123.45
+
+Hex literals are like C: `0x1a2b3c` and `-0x0x1a2b3c`. Not like CL's
+`#xf00` and `#x-f00`.
+
+`inc` and `dec` are CL's `1+` and `1-`. Yes, really! They make new
+values. They do NOT modify variables like CL's `incf` and `decf`! See
+Mutable state for the latter.
+
+Bignum literals are suffixed `N`. Large numbers are auto-promoted to
+bignums when reading:
+
+        10000000000000000000 => 10000000000000000000N
+        
+But NOT when calculating! You have to coerce them manually :(
+
+   10000N
+   (bigint 10000) => 10000N
+
+Lists and Booleans
+==================
+
+A list is a singly-linked list made of a chain of cons cells, just as
+in CL. `quote`, `first` and `rest` work as in CL:
+
+      (quote (1 2 3)) => (1 2 3)
+      '(1 2 3) => (1 2 3)
+         (first '(1 2 3)) => 1
+         (rest '(1 2 3)) => (2 3)
+         (first (rest '(1 2 3))) => 2
+         (rest (rest '(1 2 3))) => (3)
+
+Clojure treats commas as whitespace. They can optionally be used to
+clarify (or obfuscate) lists and other collections:
+
+      '(1,2,3,4) => (1 2 3 4)
+      '(1,2,3 4) => (1 2 3 4)
+
+Clojure doesn't talk about `car` and `cdr`! Use `first` and `rest`.
+
+The empty list () is not just syntactic sugar for `nil`. They are two
+different things in Clojure! `first` and `rest` are lenient as in CL:
+they don't throw exceptions if the list is too short.
+
+     () => ()
+     '() => ()
+     nil => nil
+        (rest '(1)) => ()
+       (rest (rest '(1))) => ()
+       
+      (first ()) => nil
+      (rest ()) => ()
+
+     (first nil) => nil
+     (rest nil) => ()
+
+The boolean values are `true` and `false`, not `t` and `nil` as
+in CL. As in CL, `(not (not x))` coerces any value into a boolean.
+
+Vectors and Arrays
+==================
+
+Clojure has a vector datatype that's completely distinct from the list
+datatype, just like CL. Vector literals use square brackets:
+
+       [1 2 3] => [1 2 3]
+       [1] => [1]
+       [] => []
+
+NOTE: In some Scheme implementations, parentheses and square brackets
+can be used interchangeably. Not here! In clojure, parentheses always
+create lists and square brackets always create vectors. In many places
+the syntax specifically expects a list or a vector, and you cannot use
+the other one.
+
+`count` is a generalization of CL's `length`. It counts all elements
+in a list, vector or other collection. To count occurrences of a
+particular element (as CL's `count` does),
+
+Maps a.k.a. hash tables
+=======================
+
+Maps are Clojure's hash tables. (They're actually trees under the
+hood.)
+
+Braces `{}` are syntactic sugar and the usual way to create maps:
+
+   {} => {}
+   {1} => RuntimeException: Map literal must contain an even number of forms
+   {1 2} => {1 2}
+   {1 2 3 4} => {1 2, 3 4}
+   {1 2, 3 4 => {1 2, 3 4}  ; Commas can optionally be used to clarify...
+   {1,2 3 4} => {1 2, 3 4}  ; or obfuscate! They are just whitespace.
+
+Use `{}` where you'd call `make-hash-table` in CL.
+
+Use `get` in place of CL's `gethash`. Or call the map! If you have a
+collection in function position, it works as a getter.
+
+    (get {1 2} 1) => 2
+    ({1 2} 1) => 2
+
+`conj` merges two or more maps. For duplicate keys, the last map wins.
+
+    (conj {3 4 5 6 1 1}) => ArityException Wrong number of args (1)
+    (conj {3 4 5 6 1 1} {1 2 3 44} {1 22}) => {1 22, 3 44, 5 6}
+
+Sets
+----
+
+Clojure has a first-class `set` datatype.
+
+        (set [1 2 3 4])
+        #{1 2 3 4}
+        (type #{1 2 3 4})
+        clojure.lang.PersistentHashSet
+
+intersection, union, difference
+
+
+Higher-order functions and convenience
+======================================
+
+The `map` *function* is Clojure's `mapcar`. Not to be confused with
+maps-the-data-structure!
+
+`reduce` is much like CL.
+
+Clojure has "threading macros" (nothing to do with concurrency) that
+let you use Smalltalk-like postfix syntax.
+
+
+Meta
+====
+
+`type` is like `type-of`:
+
+       => (type '(1 2 3 4))
+       clojure.lang.PersistentList
+
+
+Control flow
+------------
+`do` is CL's `progn`. There's no `prog1` in the standard library.
+
+`if` is just like CL.
+
+`cond` is different:
+
+`case`
+
+`fn` is Clojure's `lambda` The arguments are given in a vector, not a
+list! This is a common pitfall for people coming from other Lisps.
+
+      (fn [] 123)
+    (fn [x] x)
+    (fn [x] (print x) (inc x))
+
+`#()` is syntactic sugar for lambda. Not a vector literal as in CL!
+
+`recur` calls the containing function recursively.
+
+Tail recursion (the programming idiom) is done with `recur`. Tail call
+elimination (the compiler optimization that turns calls into jumps) is
+missing. The optimization awaits native support from the JVM.
+
+`loop` actually makes a recursive function and tail-calls it
+repeatedly! It's not based on gotos and and mutable state like CL's
+`loop`.
+
+`dolist`
+
+`dotimes`
+
+Multiple return values.
+
+Exception handling
+------------------
+
+`try` is like CL's `handler-case`.
+
+Control cannot resume at the site of the exception. There is nothing
+as general as CL's `handler-bind`.
+
+Symbols, definitions and namespaces
+-----------------------------------
+
+Clojure always reads in symbols in a case-sensitive manner! `nil`,
+`NIL` and `Nil` are always read in as different symbols from source
+files and from the REPL. (CL symbol names are also case-sensitive
+under the hood. However, the CL *reader* is case-insensitive by
+default and uppercases all symbol names after reading them, obscuring
+this fact from casual users. Clojure does not obscure the fact.)
+
+Symbol names are more resricted than CL. 1+ and 1- are invalid symbol
+names (they are parsed as numbers, and even then they fail).
+
+Clojure is a Lisp-1 like Scheme. Functions and variables live in the
+same namespace. (CL is a Lisp-2 where they are separated.)
+
+`def` is the closest thing to CL's `defvar` and `defparameter`.
+
+`defn` is CL's `defun`:
+
+`#'foo` doesn't give you the function `foo`. It gives you the "var"
+behind the symbol "foo".
+
+Destructuring parameter lists
+-----------------------------
+Optional 
+
+
+Dynamic variables ("special variables")
+---------------------------------------
+
+Variables defined with `def` are lexical.
+
+Read macros
+===========
+
+Language Spec
+-------------
+
+https://clojuredocs.org/clojure.core/loop is the closest thing to the
+Common Lisp HyperSpec (CLHS).
+
+Editor support
+--------------
+
+GNU Emacs is the most popular text editor, just as for CL.
+
+CIDER ("The Clojure Interactive Development Environment that Rocks")
+is the most popular Emacs-based development environment for Clojure.
+
+SLIME ("The Superior Lisp Interaction Mode for Emacs"), the most
+popular CL development environment, can also do Clojure.
