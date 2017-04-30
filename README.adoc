@@ -43,7 +43,7 @@ Bignum literals are suffixed `N`. Large numbers are auto-promoted to
 bignums when reading:
 
         10000000000000000000 => 10000000000000000000N
-        
+
 But NOT when calculating! You have to coerce them manually :(
 
    10000N
@@ -79,7 +79,7 @@ they don't throw exceptions if the list is too short.
      nil => nil
         (rest '(1)) => ()
        (rest (rest '(1))) => ()
-       
+
       (first ()) => nil
       (rest ()) => ()
 
@@ -239,7 +239,7 @@ behind the symbol "foo".
 
 Destructuring parameter lists
 -----------------------------
-Optional 
+Optional
 
 
 Dynamic variables ("special variables")
