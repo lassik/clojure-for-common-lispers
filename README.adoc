@@ -268,6 +268,14 @@ Gensyms can be done by suffixing a symbol with `#`:
          ~@remaining-forms
 	 result#))
 
+`macroexpand-1` and `macroexpand` work like CL:
+
+    => (macroexpand-1 '(my-prog1 1 2 3))
+    (clojure.core/let [result__12201__auto__ 1] 2 3 result__12201__auto__)
+
+    => (macroexpand '(my-prog1 1 2 3))
+    (let* [result__12201__auto__ 1] 2 3 result__12201__auto__)
+
 Read macros
 -----------
 
