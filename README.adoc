@@ -1,6 +1,8 @@
 Clojure for Common Lispers
 ==========================
 
+:toc:
+
 Startup and REPL
 ----------------
 Leiningen is the most popular way to run Clojure and work with Clojure
