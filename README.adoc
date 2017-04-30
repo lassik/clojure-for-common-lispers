@@ -247,6 +247,27 @@ Dynamic variables ("special variables")
 
 Variables defined with `def` are lexical.
 
+Macros
+------
+
+`defmacro` is just like CL, but with two differences...
+
+    (defmacro dumb-or [a b]
+      `(if ~a ~a ~b))
+
+1. The arguments `[a b]` are in square brackets instead of parentheses.
+2. A tilde `~` is used instead of a comma `,` to break out of a backquote.
+
+Tilde-at `~@` is like CL's comma-at `,@` which splices the contents of
+the given list into the middle the containing quoted list.
+
+Gensyms can be done by suffixing a symbol with `#`:
+
+    (defmacro my-prog1 [first-form & remaining-forms]
+      `(let [result# ~first-form]
+         ~@remaining-forms
+	 result#))
+
 Read macros
 -----------
 
