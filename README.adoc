@@ -266,7 +266,7 @@ Gensyms can be done by suffixing a symbol with `#`:
     (defmacro my-prog1 [first-form & remaining-forms]
       `(let [result# ~first-form]
          ~@remaining-forms
-	 result#))
+         result#))
 
 `macroexpand-1` and `macroexpand` work like CL:
 
