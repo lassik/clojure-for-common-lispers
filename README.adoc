@@ -19,8 +19,9 @@ Comments start with ; and run until end-of-line like CL (and most Lisps).
 CL block comments `#| ... |#`
 
 Symbols
-=======
+-------
 
+a
 
 Numbers
 -------
@@ -49,7 +50,7 @@ But NOT when calculating! You have to coerce them manually :(
    (bigint 10000) => 10000N
 
 Lists and Booleans
-==================
+------------------
 
 A list is a singly-linked list made of a chain of cons cells, just as
 in CL. `quote`, `first` and `rest` work as in CL:
@@ -89,7 +90,7 @@ The boolean values are `true` and `false`, not `t` and `nil` as
 in CL. As in CL, `(not (not x))` coerces any value into a boolean.
 
 Vectors and Arrays
-==================
+------------------
 
 Clojure has a vector datatype that's completely distinct from the list
 datatype, just like CL. Vector literals use square brackets:
@@ -109,7 +110,7 @@ in a list, vector or other collection. To count occurrences of a
 particular element (as CL's `count` does),
 
 Maps a.k.a. hash tables
-=======================
+-----------------------
 
 Maps are Clojure's hash tables. (They're actually trees under the
 hood.)
@@ -150,7 +151,7 @@ intersection, union, difference
 
 
 Higher-order functions and convenience
-======================================
+--------------------------------------
 
 The `map` *function* is Clojure's `mapcar`. Not to be confused with
 maps-the-data-structure!
@@ -162,7 +163,7 @@ let you use Smalltalk-like postfix syntax.
 
 
 Meta
-====
+----
 
 `type` is like `type-of`:
 
@@ -247,7 +248,9 @@ Dynamic variables ("special variables")
 Variables defined with `def` are lexical.
 
 Read macros
-===========
+-----------
+
+a
 
 Language Spec
 -------------
